@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git clone git@github.com:jaz303/CSDL2.swift.git modules/CSDL2
+git clone git@github.com:jaz303/SDL2.swift.git modules/SDL2
