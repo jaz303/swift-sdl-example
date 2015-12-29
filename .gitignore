@@ -2,3 +2,4 @@ main
 *.dylib
 modules/*
 
+build
