@@ -21,6 +21,7 @@ build:
 build/$(SDL2_DYLIB): build
 	cd modules/SDL2; \
 	swiftc \
+		-L$(LIB_DIR) \
 		-I ../ \
 		-Xcc -I/usr/include \
 		-module-name $(SDL2_LIB_NAME) \
@@ -32,6 +33,7 @@ build/$(SDL2_DYLIB): build
 modules/$(SDL2_SWIFTMODULE):
 	cd modules/SDL2; \
 	swiftc \
+		-L$(LIB_DIR) \
 		-I ../ \
 		-Xcc -I/usr/include \
 		-module-name $(SDL2_LIB_NAME) \
