@@ -22,7 +22,7 @@ build/$(SDL2_DYLIB): build
 	cd modules/SDL2 && \
 	swiftc \
 		-L$(LIB_DIR) \
-		-L/Users/jason/dev/projects/spline/modules/CSDL2/ \
+		-L../CSDL2/ \
 		-I ../ \
 		-Xcc -I/usr/include \
 		-module-name $(SDL2_LIB_NAME) \
@@ -35,6 +35,7 @@ modules/$(SDL2_SWIFTMODULE):
 	cd modules/SDL2 && \
 	swiftc \
 		-L$(LIB_DIR) \
+		-L/Users/jason/dev/projects/spline/modules/CSDL2/ \
 		-I ../ \
 		-Xcc -I/usr/include \
 		-module-name $(SDL2_LIB_NAME) \
