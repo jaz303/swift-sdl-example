@@ -1,13 +1,17 @@
 import SDL2_swift
 
 Init()
+let win = Window(title: "SDL Swift Demo")
+let img = Images.load("guardian.jpg")!
+let surface = win.surface
+surface.blitSurface(img, x: 30, y: 30)
+win.update()
 
-let win = Window()
+Timers.setTimeout(1000, callback: {
+	(foo: AnyObject?) -> Void in
+		print("timeout!")
+})
 
-win.showMessageBox(MessageBoxType.Information, title: "Hello", message: "This is a message")
-
-//let win = Window(title: "Hello from Swift", width: 400, height: 300)
-//win.resizeToWidth(1024, height: 768)
-//win.hide()
+//Timers.delay(1000)
 
 createWindowAndWait()
