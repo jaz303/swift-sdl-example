@@ -1,6 +1,7 @@
 import SDL2_swift
 
-Init()
+SDL.start()
+
 let win = Window(title: "SDL Swift Demo")
 let img = Images.load("guardian.jpg")!
 let surface = win.surface
@@ -12,6 +13,16 @@ Timers.setTimeout(1000, callback: {
 		print("timeout!")
 })
 
-//Timers.delay(1000)
+var evt = Event()
+while true {
+	Events.wait(&evt)
+	if evt.isWindow && evt.isWindowClose {
+		break	
+	} else if evt.isMouseMotion {
+		print(evt.mouseMotionX, evt.mouseMotionY)
+	} else if evt.isMouseButtonDown && evt.isLeftMouseButton {
+		print("left mouse down!")
+	}
+}
 
-createWindowAndWait()
+SDL.quit()
