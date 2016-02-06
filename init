@@ -2,3 +2,5 @@
 
 git clone git@github.com:$1/CSDL2.swift.git modules/CSDL2
 git clone git@github.com:$1/SDL2.swift.git modules/SDL2
+git clone git@github.com:$1/Ccairo.swift.git modules/Ccairo
+git clone git@github.com:$1/Cairo.swift.git modules/Cairo
