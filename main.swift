@@ -1,4 +1,6 @@
 import SDL2_swift
+import Cairo_swift
+
 
 SDL.start()
 
@@ -11,6 +13,22 @@ let img = Images
 
 print("image format:", img.pixelFormat.name)
 
+//
+
+let s = Surface(width: 300, height: 200)
+let cis = ImageSurface(data: s.pixels, width: s.width, height: s.height, stride: s.pitch)
+let c = Context(surface: cis)
+
+c.setSourceRed(0.0, green: 0.0, blue: 1.0)
+c.clear()
+
+c.beginPath()
+c.setSourceRed(0.0, green: 1.0, blue: 0.0)
+c.moveToX(200.0, Y: 100.0)
+c.lineToX(10.0, Y: 10.0)
+c.stroke()
+
+
 //let surface = win.surface
 //surface.blitSurface(img, x: 30, y: 30)
 //win.update()
@@ -20,8 +38,8 @@ r.setDrawColorRed(0, green:0, blue:0)
 r.clear()
 r.setDrawColorRed(255, green:0, blue:0)
 
-let t = r.createStreamingTextureWidth(320, height: 320)
-t.copyFromSurface(img)
+let t = r.createStreamingTextureWidth(s.width, height: s.height)
+t.copyFromSurface(s)
 
 print("texture size", t.width, t.height)
 
@@ -31,7 +49,7 @@ r.drawRect(Rect(x: 5, y: 5, w: 210, h: 110))
 r.drawPointX(500, y: 500)
 r.drawLineX1(30, y1: 400, x2: 600, y2: 200)
 
-r.copyTexture(t, sourceRect: Rect(x:0, y:0, w:320, h:320), destinationRect: Rect(x:400, y:200, w:320, h:320))
+r.copyTexture(t, sourceRect: Rect(x:0, y:0, w:300, h:200), destinationRect: Rect(x:400, y:200, w:300, h:200))
 
 r.present()
 

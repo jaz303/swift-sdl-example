@@ -1,14 +1,20 @@
+CAIRO_LIB_NAME := Cairo_swift
+CAIRO_DYLIB := lib$(CAIRO_LIB_NAME).dylib
+CAIRO_SWIFTMODULE := $(CAIRO_LIB_NAME).swiftmodule
+
 SDL2_LIB_NAME := SDL2_swift
 SDL2_DYLIB := lib$(SDL2_LIB_NAME).dylib
 SDL2_SWIFTMODULE := $(SDL2_LIB_NAME).swiftmodule
 LIB_DIR := /usr/local/lib # where SDL is installed
 
-build/main: build extensions main.swift modules/$(SDL2_SWIFTMODULE) build/$(SDL2_DYLIB)
+build/main: build extensions main.swift modules/$(SDL2_SWIFTMODULE) build/$(SDL2_DYLIB) modules/$(CAIRO_SWIFTMODULE) build/$(CAIRO_DYLIB)
 	swiftc \
 		-L$(LIB_DIR) \
 		-L./build \
 		-l$(SDL2_LIB_NAME) \
+		-l$(CAIRO_LIB_NAME) \
 		-lSDL2 \
+		-lcairo \
 		-Xcc -I/usr/include \
 		-I ./modules \
 		-o build/main \
@@ -42,6 +48,31 @@ modules/$(SDL2_SWIFTMODULE): build extensions
 		-emit-module \
 		-emit-module-path ../$(SDL2_SWIFTMODULE) \
 		SDL2.swift
+
+build/$(CAIRO_DYLIB): build
+	cd modules/Cairo && \
+	swiftc \
+		-L$(LIB_DIR) \
+		-L../../build \
+		-I ../ \
+		-Xcc -I/usr/include \
+		-module-name $(CAIRO_LIB_NAME) \
+		-emit-library \
+		-o ../../build/$(CAIRO_DYLIB) \
+		Cairo.swift && \
+	install_name_tool -id build/$(CAIRO_DYLIB) ../../build/$(CAIRO_DYLIB)
+
+modules/$(CAIRO_SWIFTMODULE): build
+	cd modules/Cairo && \
+	swiftc \
+		-L$(LIB_DIR) \
+		-L/../../build \
+		-I ../ \
+		-Xcc -I/usr/include \
+		-module-name $(CAIRO_LIB_NAME) \
+		-emit-module \
+		-emit-module-path ../$(CAIRO_SWIFTMODULE) \
+		Cairo.swift
 
 extensions: build/libSDL2_swift_extensions.dylib
 
