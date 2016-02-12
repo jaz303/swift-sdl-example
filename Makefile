@@ -1,3 +1,5 @@
+LIB_DIR := /usr/local/lib # where SDL is installed
+
 CAIRO_LIB_NAME := Cairo_swift
 CAIRO_DYLIB := lib$(CAIRO_LIB_NAME).dylib
 CAIRO_SWIFTMODULE := $(CAIRO_LIB_NAME).swiftmodule
@@ -5,14 +7,18 @@ CAIRO_SWIFTMODULE := $(CAIRO_LIB_NAME).swiftmodule
 SDL2_LIB_NAME := SDL2_swift
 SDL2_DYLIB := lib$(SDL2_LIB_NAME).dylib
 SDL2_SWIFTMODULE := $(SDL2_LIB_NAME).swiftmodule
-LIB_DIR := /usr/local/lib # where SDL is installed
 
-build/main: build extensions main.swift modules/$(SDL2_SWIFTMODULE) build/$(SDL2_DYLIB) modules/$(CAIRO_SWIFTMODULE) build/$(CAIRO_DYLIB)
+SPLINE_LIB_NAME := spline
+SPLINE_DYLIB := lib$(SPLINE_LIB_NAME).dylib
+SPLINE_SWIFTMODULE := $(SPLINE_LIB_NAME).swiftmodule
+
+build/main: build extensions main.swift sdl2 cairo spline
 	swiftc \
 		-L$(LIB_DIR) \
 		-L./build \
 		-l$(SDL2_LIB_NAME) \
 		-l$(CAIRO_LIB_NAME) \
+		-l$(SPLINE_LIB_NAME) \
 		-lSDL2 \
 		-lcairo \
 		-Xcc -I/usr/include \
@@ -22,6 +28,8 @@ build/main: build extensions main.swift modules/$(SDL2_SWIFTMODULE) build/$(SDL2
 
 build:
 	mkdir -p build
+
+sdl2: build/$(SDL2_DYLIB) modules/$(SDL2_SWIFTMODULE)
 
 # TODO: fix install_name_tool kludge
 build/$(SDL2_DYLIB): build extensions
@@ -49,6 +57,8 @@ modules/$(SDL2_SWIFTMODULE): build extensions
 		-emit-module-path ../$(SDL2_SWIFTMODULE) \
 		SDL2.swift
 
+cairo: build/$(CAIRO_DYLIB) modules/$(CAIRO_SWIFTMODULE)
+
 build/$(CAIRO_DYLIB): build
 	cd modules/Cairo && \
 	swiftc \
@@ -74,6 +84,41 @@ modules/$(CAIRO_SWIFTMODULE): build
 		-emit-module-path ../$(CAIRO_SWIFTMODULE) \
 		Cairo.swift
 
+spline: build/$(SPLINE_DYLIB) modules/$(SPLINE_SWIFTMODULE)
+
+build/$(SPLINE_DYLIB): build sdl2 cairo
+	cd modules/spline && \
+	swiftc \
+		-L$(LIB_DIR) \
+		-L../../build \
+		-l$(SDL2_LIB_NAME) \
+		-l$(CAIRO_LIB_NAME) \
+		-lSDL2 \
+		-lcairo \
+		-I ../ \
+		-Xcc -I/usr/include \
+		-module-name $(SPLINE_LIB_NAME) \
+		-emit-library \
+		-o ../../build/$(SPLINE_DYLIB) \
+		spline.swift && \
+	install_name_tool -id build/$(SPLINE_DYLIB) ../../build/$(SPLINE_DYLIB)
+
+modules/$(SPLINE_SWIFTMODULE): build
+	cd modules/spline && \
+	swiftc \
+		-L$(LIB_DIR) \
+		-L/../../build \
+		-l$(SDL2_LIB_NAME) \
+		-l$(CAIRO_LIB_NAME) \
+		-lSDL2 \
+		-lcairo \
+		-I ../ \
+		-Xcc -I/usr/include \
+		-module-name $(SPLINE_LIB_NAME) \
+		-emit-module \
+		-emit-module-path ../$(SPLINE_SWIFTMODULE) \
+		spline.swift
+
 extensions: build/libSDL2_swift_extensions.dylib
 
 build/libSDL2_swift_extensions.dylib: modules/CSDL2/libSDL2_swift_extensions.dylib
@@ -84,4 +129,4 @@ clean:
 	rm -rf build
 	rm -f modules/*.swift{doc,module}
 
-.PHONY: clean extensions
+.PHONY: clean extensions sdl2 cairo spline
