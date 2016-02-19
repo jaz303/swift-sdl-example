@@ -17,7 +17,7 @@ The build process is <del>pretty rickety</del> a disaster right now. There's gra
   - fork this repository, along with my `SDL2.swift`, `CSDL2.swift`, `Cairo.swift`, `Ccairo.swift` and `spline` projects (optional step, if skipped use `jaz303` for `$MY_GITHUB_USER`)
   - `$ ./init $MY_GITHUB_USER`
   - `$ cd modules/CSDL2/support`
-  - Update `Makefile` so that `SDL` points to SDL install root
+  - Update `Makefile` so that `LIB_DIR` points to SDL/Cairo install root
   - Update `module.map` with correct paths to SDL headers
   - `$ make`
   - `$ cd ../../..`
