@@ -1,8 +1,13 @@
 #!/bin/bash
 
-git clone git@github.com:$1/CSDL2.swift.git modules/CSDL2
-git clone git@github.com:$1/SDL2.swift.git modules/SDL2
-git clone git@github.com:$1/Ccairo.swift.git modules/Ccairo
-git clone git@github.com:$1/Cairo.swift.git modules/Cairo
-git clone git@github.com:$1/spline.git modules/spline
+REPOS="CSDL2 SDL2 Ccairo Cairo spline"
+
+for r in $REPOS
+do
+    if [ -d "modules/${r}" ]; then
+        cd "modules/${r}" && git pull origin master && cd ../..
+    else
+        git clone git@github.com:${1}/${r}.swift.git modules/${r}
+    fi
+done
 
