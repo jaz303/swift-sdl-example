@@ -10,8 +10,8 @@ class Sketch : Sketch2D {
 	override func loop(clock: Clock) {
 		x = (x + 1) % 300
 		clear(r: 0.0, g: 0.0, b: 1.0)
-		plot(10, 10, r: 1.0, g: 1.0, b: 0)
-		stroke(r: 0.0, g: 1.0, b: 0.0)
+		plot(10, 10, color: WHITE)
+		stroke(GREEN, alpha: 0.7)
 		begin()
 		pushMatrix()
 		translate(dx: x, dy: 0)
