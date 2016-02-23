@@ -12,7 +12,7 @@ SPLINE_LIB_NAME := spline
 SPLINE_DYLIB := lib$(SPLINE_LIB_NAME).dylib
 SPLINE_SWIFTMODULE := $(SPLINE_LIB_NAME).swiftmodule
 
-build/main: build extensions main.swift sdl2 cairo spline
+build/main: build main.swift sdl2 cairo spline
 	swiftc \
 		-L$(LIB_DIR) \
 		-L./build \
@@ -32,7 +32,7 @@ build:
 sdl2: build/$(SDL2_DYLIB) modules/$(SDL2_SWIFTMODULE)
 
 # TODO: fix install_name_tool kludge
-build/$(SDL2_DYLIB): build extensions
+build/$(SDL2_DYLIB): build
 	cd modules/SDL2 && \
 	swiftc \
 		-L$(LIB_DIR) \
@@ -45,7 +45,7 @@ build/$(SDL2_DYLIB): build extensions
 		SDL2.swift && \
 	install_name_tool -id build/$(SDL2_DYLIB) ../../build/$(SDL2_DYLIB)
 
-modules/$(SDL2_SWIFTMODULE): build extensions
+modules/$(SDL2_SWIFTMODULE): build
 	cd modules/SDL2 && \
 	swiftc \
 		-L$(LIB_DIR) \
@@ -119,14 +119,8 @@ modules/$(SPLINE_SWIFTMODULE): build
 		-emit-module-path ../$(SPLINE_SWIFTMODULE) \
 		spline.swift
 
-extensions: build/libSDL2_swift_extensions.dylib
-
-build/libSDL2_swift_extensions.dylib: modules/CSDL2/libSDL2_swift_extensions.dylib
-	cp $< $@
-	install_name_tool -id build/libSDL2_swift_extensions.dylib $@
-
 clean:
 	rm -rf build
 	rm -f modules/*.swift{doc,module}
 
-.PHONY: clean extensions sdl2 cairo spline
+.PHONY: clean sdl2 cairo spline
